@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -26,10 +28,6 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
   // This class is the configuration for the state. It holds the values (in this
   // case the title) provided by the parent (in this case the App widget) and
   // used by the build method of the State. Fields in a Widget subclass are
@@ -42,20 +40,29 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  // Prefix Domain for iOS MethodChannel
   static const platform =
       const MethodChannel("com.flutter.baristikir/baristikir");
-  int _counter = 0;
 
-  void _scanDocument() async {
-    List<dynamic> val;
+  // States & Data Outputs
+  bool _scanning = false;
+  String _exception;
+  List<dynamic> _documents;
+
+  // Method for calling Scan MethodChannel
+  Future<List<String>> _scanDocument() async {
+    // Storing Scanned images here
+    List<dynamic> images;
 
     try {
-      val = await platform.invokeMethod("ScanDocument");
+      // Invoke Method Channel for Swift
+      images = await platform.invokeMethod("ScanDocument");
     } catch (e) {
       print(e);
+      return e;
     }
 
-    print(val.length);
+    return images.map((e) => e.toString()).toList();
   }
 
   @override
@@ -70,27 +77,48 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
+      body: Column(
+        textDirection: TextDirection.ltr,
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (_scanning == false)
+            FlatButton(
+              onPressed: () async {
+                setState(() {
+                  _scanning = true;
+                });
+                try {
+                  final documents = await _scanDocument();
+                  setState(() async {
+                    _documents = documents;
+                  });
+                } catch (e) {
+                  setState(() {
+                    _exception = e;
+                  });
+                  print(_exception);
+                }
+                setState(() {
+                  _scanning = false;
+                });
+              },
+              child: Text("Scan Documents"),
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
-        ),
+        ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _scanDocument();
-        },
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () async {
+      //     if (_scanning == false) {
+      //       setState(() {
+      //         _scanning = true;
+      //       });
+      //       _scanDocument();
+      //     }
+      //   },
+      //   tooltip: 'Scan',
+      //   child: Icon(Icons.add),
+      // ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
