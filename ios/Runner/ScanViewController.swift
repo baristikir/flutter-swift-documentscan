@@ -73,6 +73,7 @@ class ScanViewController: NSObject, VNDocumentCameraViewControllerDelegate {
     func documentCameraViewController(_ controller: VNDocumentCameraViewController, didFailWithError error: Error) {
         // Handle errors appropriately in your app.
         print(error)
+        
 
         // Responsible for dismissing the `VNDocumentScanViewController` controller.
         documentVC.dismiss(animated: true)

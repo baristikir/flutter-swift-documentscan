@@ -10,63 +10,6 @@ import Flutter
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
     
-//    // Method Call -> Opening Document Scanner View `VNDocumentCameraViewController
-//    channel.setMethodCallHandler {(methodCall, result) in
-//        if methodCall.method == "ScanDocument"
-//        {
-//            #if targetEnvironment(simulator)
-//                result(FlutterError(code: "not_implemented", message: "Cannot run on Simulator", details: nil))
-//                return
-//            #else
-//
-//            #endif
-//        }
-//        if methodCall.method == "PrintFromiOS"
-//        {
-//            if #available(iOS 13.0, *) {
-//                guard VNDocumentCameraViewController.isSupported else { print("Document scanning not supported"); return }
-//                var scannerViewController: VNDocumentCameraViewController?
-//                scannerViewController = VNDocumentCameraViewController()
-//                scannerViewController?.delegate = self
-//
-//                self.window.rootViewController = scannerViewController
-//
-//                func documentCameraViewController(_ controller: VNDocumentCameraViewController, didFinishWith scan: VNDocumentCameraScan) {
-//
-//                    controller.dismiss(animated: true)
-//                    self.window.rootViewController = controller
-//
-//                    print("Finished scanning document \"\(String(describing: scan.title))\"")
-//                    print("Found \(scan.pageCount)")
-//
-//                    let firstImage = scan.imageOfPage(at: 0)
-//                }
-//
-//                func documentCameraViewControllerDidCancel(_ controller: VNDocumentCameraViewController) {
-//                    // You are responsible for dismissing the controller.
-//                    controller.dismiss(animated: true)
-//                    self.window.rootViewController = controller
-//                    result("Keine Aufnahmen")
-//                }
-//
-//                func documentCameraViewController(_ controller: VNDocumentCameraViewController, didFailWithError error: Error) {
-//                    // You should handle errors appropriately in your app.
-//                    print(error)
-//                    result(error)
-//
-//                    // You are responsible for dismissing the controller.
-//                    controller.dismiss(animated: true)
-//                }
-//
-//            } else {
-//                // Fallback on earlier versions
-//                result("mindestens iOS 13 beenötigt")
-//            }
-//        
-    //}
-    
-
-    
     GeneratedPluginRegistrant.register(with: self)
     
     var scanViewController:ScanViewController?
@@ -89,45 +32,40 @@ import Flutter
         }
         
         // Vision Kit Document Scanner
-        if #available(iOS 13.0, *) {
-            scanViewController = ScanViewController()
+        scanViewController = ScanViewController()
+        
+        print("Inside Method channel & before Scan Document Process")
+        
+        scanViewController?.scanDocument{ [weak self] scanResult in
             
-            print("Inside Method channel & before Scan Document Process")
+            guard let strongSelf = self else {return}
             
-            scanViewController?.scanDocument{ [weak self] scanResult in
+            print("before Scan Results Check")
+            
+            switch(scanResult){
+            
+            // Successfully opened VNDocumentViewController
+            case .success(let scanResult):
                 
-                guard let strongSelf = self else {return}
+                // Checking State of Scans - 1.Succesfully scanned and saved & 2.Cancled out of VC
+                switch scanResult {
                 
-                print("before Scan Results Check")
+                // Saved button pressed with scans
+                case .success(images: let images):
+                    strongSelf.savedImages(images: images, result: result)
                 
-                switch(scanResult){
+                // Cancel button pressed
+                case .canceled:
+                    result(nil)
                 
-                // Successfully opened VNDocumentViewController
-                case .success(let scanResult):
-                    
-                    // Checking State of Scans - 1.Succesfully scanned and saved & 2.Cancled out of VC
-                    switch scanResult {
-                    
-                    // Saved button pressed with scans
-                    case .success(images: let images):
-                        strongSelf.savedImages(images: images, result: result)
-                    
-                    // Cancel button pressed
-                    case .canceled:
-                        result(nil)
-                    
-                    default:
-                        fatalError(FlutterMethodNotImplemented as! String)
-                    }
-                    
-                // Error occured through opening VNDocumentViewController
-                case .failure(let error):
-                    result(FlutterError(code: "code", message: error.localizedDescription, details: nil))
+                default:
+                    fatalError(FlutterMethodNotImplemented as! String)
                 }
+                
+            // Error occured through opening VNDocumentViewController
+            case .failure(let error):
+                result(FlutterError(code: "code", message: error.localizedDescription, details: nil))
             }
-        } else {
-            // Fallback on earlier versions
-            result(FlutterError(code: "code", message: "Scan war nicht erfolgrein", details: nil))
         }
         
         

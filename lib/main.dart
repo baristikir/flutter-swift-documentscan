@@ -47,18 +47,29 @@ class _MyHomePageState extends State<MyHomePage> {
   // States & Data Outputs
   bool _scanning = false;
   String _exception;
-  List<String> _documentPaths;
+  List<dynamic> _documentPaths;
 
   // Method for calling Scan MethodChannel
-  Future<List<String>> _scanDocument() async {
+  Future<List<dynamic>> _scanDocument() async {
     // Storing Scanned images here
-
+    List<dynamic> images;
+    // try {
     // Invoke Method Channel for Swift
     print("Before Swift Method Channel");
+
     dev.log('message',
         name: '_document', error: {"data": "Error document data"});
-    final images = await platform.invokeMethod("ScanDocument");
+
+    images = await platform.invokeMethod("ScanDocument");
+
+    print(images.length);
+    print(images);
+
     print("Done Swift Method Channel");
+    // } catch (e) {
+    //   print(e);
+    //   return e;
+    // }
 
     return images.map((e) => e.toString()).toList();
   }
