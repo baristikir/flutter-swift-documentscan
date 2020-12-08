@@ -46,11 +46,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
   // States & Data Outputs
   bool _scanning = false;
+  bool _documentsScanned = false;
   String _exception;
-  List<dynamic> _documentPaths;
+  List<String> _documentPaths;
 
   // Method for calling Scan MethodChannel
-  Future<List<dynamic>> _scanDocument() async {
+  Future<List<String>> _scanDocument() async {
     // Storing Scanned images here
     List<dynamic> images;
     // try {
@@ -62,14 +63,15 @@ class _MyHomePageState extends State<MyHomePage> {
 
     images = await platform.invokeMethod("ScanDocument");
 
+    dev.log('message', name: 'images', error: {"data": "Image Exception"});
+
     print(images.length);
     print(images);
 
-    print("Done Swift Method Channel");
     // } catch (e) {
     //   print(e);
     //   return e;
-    // }
+    // }D
 
     return images.map((e) => e.toString()).toList();
   }
@@ -84,7 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
         textDirection: TextDirection.ltr,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          if (_scanning == false)
+          if (_scanning == false && _documentsScanned == false)
             Center(
                 child: Container(
               child: MaterialButton(
@@ -97,11 +99,16 @@ class _MyHomePageState extends State<MyHomePage> {
                   });
                   try {
                     final documents = await _scanDocument();
-                    print("Dokumente wurden gescannt.");
-                    setState(() async {
+                    print("*******Swift Documents*******");
+                    print(documents);
+                    print("*****************************");
+                    setState(() {
                       _documentPaths = documents;
+                      _documentsScanned = true;
                     });
-                    print(_documentPaths.map((e) => e.toString()).toList());
+                    print("********Flutter Documents********");
+                    print(_documentPaths);
+                    print("*********************************");
                   } catch (e) {
                     setState(() {
                       _exception = e;
@@ -115,6 +122,19 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Text("Scan Documents"),
               ),
             )),
+          if (_documentsScanned == true)
+            Column(
+              children: <Widget>[
+                for (var i = 0; i < _documentPaths.length; i++)
+                  new Text(
+                    _documentPaths[i],
+                    style: TextStyle(
+                        color: Colors.black87,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold),
+                  )
+              ],
+            ),
         ],
       ),
     );

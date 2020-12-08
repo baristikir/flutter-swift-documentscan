@@ -83,12 +83,13 @@ import Flutter
             var imagePaths:[String] = []
             for singleImage in images {
                 let uuid = UUID().uuidString
-                if let data = singleImage.pngData(), let tempFileURL = tempDirUrl.appendingPathComponent("scaned_\(uuid).png")
+                if let data = singleImage.pngData(), let tempFileURL = tempDirUrl.appendingPathComponent("dokument_\(uuid).png")
                 {
                     do{
                         try data.write(to: tempFileURL)
                         imagePaths.append(tempFileURL.absoluteString)
                     } catch let error {
+                        print(error.localizedDescription)
                         result(FlutterError(code: "create_file_error", message: error.localizedDescription, details: nil))
                     }
                 }

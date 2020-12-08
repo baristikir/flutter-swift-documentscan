@@ -16,7 +16,7 @@ class ScanViewController: NSObject, VNDocumentCameraViewControllerDelegate {
     let documentVC = VNDocumentCameraViewController()
     var completionHandler: VisionHandler?
     
-    // Für ViewController Tests
+//    Für ViewController Tests
 //    override func viewDidAppear(_ animated: Bool) {
 //        super.viewDidAppear(animated)
 //        showDocumentScanner()
