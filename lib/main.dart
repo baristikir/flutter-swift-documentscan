@@ -47,7 +47,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   // States & Data Outputs
   bool _scanning = false;
-  bool _documentsScanned = false;
   String _exception;
   List<String> _documentPaths;
 
@@ -57,17 +56,7 @@ class _MyHomePageState extends State<MyHomePage> {
     List<dynamic> images;
 
     // Invoke Method Channel for Swift
-    print("Before Swift Method Channel");
-
-    dev.log('message',
-        name: '_document', error: {"data": "Error document data"});
-
     images = await platform.invokeMethod("ScanDocument");
-
-    dev.log('message', name: 'images', error: {"data": "Image Exception"});
-
-    print(images.length);
-    print(images);
 
     return images.map((e) => e.toString()).toList();
   }
@@ -95,13 +84,15 @@ class _MyHomePageState extends State<MyHomePage> {
                   });
                   try {
                     final documents = await _scanDocument();
+
                     print("*******Swift Documents*******");
                     print(documents);
                     print("*****************************");
+
                     setState(() {
                       _documentPaths = documents;
-                      _documentsScanned = true;
                     });
+
                     print("********Flutter Documents********");
                     print(_documentPaths);
                     print("*********************************");
