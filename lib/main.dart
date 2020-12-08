@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 import 'dart:developer' as dev;
 
@@ -54,7 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<List<String>> _scanDocument() async {
     // Storing Scanned images here
     List<dynamic> images;
-    // try {
+
     // Invoke Method Channel for Swift
     print("Before Swift Method Channel");
 
@@ -67,11 +68,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
     print(images.length);
     print(images);
-
-    // } catch (e) {
-    //   print(e);
-    //   return e;
-    // }D
 
     return images.map((e) => e.toString()).toList();
   }
@@ -122,19 +118,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Text("Scan Documents"),
               ),
             )),
-          if (_documentsScanned == true)
-            Column(
-              children: <Widget>[
-                for (var i = 0; i < _documentPaths.length; i++)
-                  new Text(
-                    _documentPaths[i],
-                    style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold),
-                  )
-              ],
-            ),
+          if (_documentPaths != null)
+            for (var i = 0; i < _documentPaths.length; i++)
+              new Image.file(
+                  File(_documentPaths[i].replaceFirst('file://', '')))
         ],
       ),
     );

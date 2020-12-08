@@ -16,12 +16,6 @@ class ScanViewController: NSObject, VNDocumentCameraViewControllerDelegate {
     let documentVC = VNDocumentCameraViewController()
     var completionHandler: VisionHandler?
     
-//    Für ViewController Tests
-//    override func viewDidAppear(_ animated: Bool) {
-//        super.viewDidAppear(animated)
-//        showDocumentScanner()
-//    }
-    
     override init() {
         super.init()
         documentVC.delegate = self
@@ -88,44 +82,3 @@ class ScanViewController: NSObject, VNDocumentCameraViewControllerDelegate {
     }
     
 }
-
-//@available(iOS 13.0, *)
-//extension ScanViewController:VNDocumentCameraViewControllerDelegate{
-//
-//    func documentCameraViewController(_ controller: VNDocumentCameraViewController, didFinishWith scan: VNDocumentCameraScan)
-//    {
-//        var images:[UIImage] = []
-//
-//        // Process the scanned pages
-//        for i in 0..<scan.pageCount {
-//            _ = scan.imageOfPage(at: i)
-//            images.append(scan.imageOfPage(at: i))
-//        }
-//
-//        // Responsible for dismissing the `VNDocumentScanViewController` controller.
-//        documentVC.dismiss(animated: true)
-//        self.completionHandler?(.success(VisionResult.success(images: images)))
-//    }
-//
-//    func documentCameraViewControllerDidCancel(_ controller: VNDocumentCameraViewController) {
-//        // Responsible for dismissing the `VNDocumentScanViewController` controller.
-//        documentVC.dismiss(animated: true)
-//        self.completionHandler?(.success(.canceled))
-//    }
-//
-//    func documentCameraViewController(_ controller: VNDocumentCameraViewController, didFailWithError error: Error) {
-//        // Handle errors appropriately in your app.
-//        print(error)
-//
-//        // Responsible for dismissing the `VNDocumentScanViewController` controller.
-//        documentVC.dismiss(animated: true)
-//        self.completionHandler?(.failure(error))
-//    }
-//
-//
-//    // Converting UIImage to base64encoded -> String
-//    class func convertImageToBase64(image: UIImage) -> String {
-//        let imageData = image.pngData()!
-//        return imageData.base64EncodedString(options: Data.Base64EncodingOptions.lineLength64Characters)
-//    }
-//}
