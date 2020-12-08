@@ -1,6 +1,4 @@
 import 'dart:io';
-import 'dart:math';
-import 'dart:developer' as dev;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -71,7 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
         textDirection: TextDirection.ltr,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          if (_scanning == false && _documentsScanned == false)
+          if (_scanning == false)
             Center(
                 child: Container(
               child: MaterialButton(
